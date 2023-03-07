@@ -1,20 +1,55 @@
-import React,{Component} from 'react'
+import React, { useState } from "react";
+import ToggleSwitch from "../components/ToggleSwitch";
 
-export const Settings = () => {
+export function Settings() {
+    let [give, setGive] = useState(false);
+    let [take, setTake] = useState(false);
+    let [request, setRequest] = useState(false);
+
+    const onSettingsChange = (checked) => {
+        if (!checked) {
+            setGive(false);
+            setTake(false);
+            setRequest(false);
+
+        }
+    }
     return (
-        <div className = 'formContainer'>
-            <div className = 'formWrapper'>
-              <span className = "title">Settings</span>
-            <form className = "toggle-switch">
-                <input type ="checkbox" class = "toggle-switch-checkbox" name = "toggleSwitch" id="toggle-switch" />
-                <label class = "toggle-switch-label" for="toggleSwitch">
-                    <span class = "toggle-switch-inner"></span>
-                    <span class = "toggle-switch-switch"></span>
-                </label>
-            </form>
-
+        <div className='formContainer'>
+            <div className='formWrapper'>
+                <span className="logo">Settings</span>
+                <form className="toggle-switch">
+                    <div>
+                        <input type="checkbox" class="toggle-switch-checkbox" name="toggleSwitch" id="toggle-switch" />
+                        <label htmlFor="give">Give</label>
+                        <ToggleSwitch
+                            id="give"
+                            checked={give}
+                            onChange={setGive}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="take">Take</label>
+                        <ToggleSwitch
+                            id="take"
+                            checked={take}
+                            onChange={setTake}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="request">Request</label>
+                        <ToggleSwitch
+                            id="request"
+                            checked={request}
+                            onChange={setRequest}
+                        />
+                    </div>
+                    <div>
+                    <label>Cooldowns</label>
+                    <input type="Time" />
+                    </div>
+                </form>
             </div>
         </div>
     );
 };
-export default Settings;
