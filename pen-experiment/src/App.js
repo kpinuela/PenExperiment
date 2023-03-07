@@ -13,7 +13,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Settings />
+        <Login />
       </header>
     </div>
   );
