@@ -7,12 +7,12 @@
 
     .formWrapper {
         background-color: rgb(253, 253, 253);
-        padding: 20px 60px;
+        padding: 20px 100px;
         border-radius: 10px;
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        align-items: center;
+        gap: 20px;
+        align-items: left;
 
         .logo {
             color: #5d5b8d;
@@ -32,8 +32,10 @@
 
             input {
                 padding: 15px;
-                border: none;
-                width: 250px;
+                border: 1px solid #a7bcff ;
+                width: 100px;
+                
+                align-items:left;
                 border-bottom: 1px solid #a7bcff;
 
                 &::placeholder {
@@ -51,20 +53,23 @@
             }
 
             label {
-                display: flex;
-                align-items: center;
+                display: inline-block;
+                vertical-align:bottom;
+                text-align: left;
                 gap: 10px;
                 color: #8da4f1;
-                font-size: 12px;
-                cursor: pointer;
-
-                img {
-                    width: 30px;
-                }
+                font-size: 18px;
             }
+
+            $label-colour: #bbb;
+            $disabled-colour: #ddd;
+            $toggle-colour: #46c436;
+            $white: #fff;
+            $focus-color: #ff0;
 
             .toggle-switch {
                 position: relative;
+                margin-right: 10px;
                 width: 75px;
                 display: inline-block;
                 vertical-align: middle;
@@ -76,13 +81,14 @@
                 &-checkbox {
                     display: none;
                 }
+                
 
                 &-label {
                     display: block;
                     overflow: hidden;
                     cursor: pointer;
-                    border: 0 solid #bbb;
-                    border-radius: 20px;
+                    border: 0 solid $label-colour;
+                    border-radius: 42px;
                     margin: 0;
                 }
 
@@ -107,55 +113,21 @@
                     }
 
                     &:before {
-                        content: "Yes";
+                        content: attr(data-yes);
                         text-transform: uppercase;
                         padding-left: 10px;
-                        background-color: #f90;
-                        color: #fff;
-                    }
-                }
-
-                &-disabled {
-                    background-color: #ddd;
-                    cursor: not-allowed;
-
-                    &:before {
-                        background-color: #ddd;
-                        cursor: not-allowed;
+                        background-color: $toggle-colour;
+                        color: $white;
                     }
                 }
 
                 &-inner:after {
-                    content: "No";
+                    content: attr(data-no);
                     text-transform: uppercase;
                     padding-right: 10px;
-                    background-color: #bbb;
-                    color: #fff;
+                    background-color: $label-colour;
+                    color: $white;
                     text-align: right;
-                }
-
-                &-switch {
-                    display: block;
-                    width: 24px;
-                    margin: 5px;
-                    background: #fff;
-                    position: absolute;
-                    top: 0;
-                    bottom: 0;
-                    right: 40px;
-                    border: 0 solid #bbb;
-                    border-radius: 20px;
-                    transition: all 0.3s ease-in 0s;
-                }
-
-                &-checkbox:checked+&-label {
-                    .toggle-switch-inner {
-                        margin-left: 0;
-                    }
-
-                    .toggle-switch-switch {
-                        right: 0px;
-                    }
                 }
             }
 

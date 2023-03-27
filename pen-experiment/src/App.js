@@ -7,16 +7,13 @@ import {
   Route,
   Navigate
 } from "react-router-dom";
-import './style.scss';
+import Game from "./pages/game";
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Login />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
+        <Settings/>
       </header>
     </div>
   );

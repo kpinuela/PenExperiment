@@ -6,7 +6,6 @@ export const Login = () => {
                 <form>
                 <span className = "logo">Admin Login</span>
                 <input type = "Admin Id" placeholder = "Admin ID"/>
-                <input type = "password" placeholder = "password"/>
                 <button>Sign in</button>
                 </form>
             </div>
