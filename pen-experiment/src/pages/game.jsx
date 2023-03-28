@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const Game = () => {
+const Game = (props) => {
   const [score, setScore] = useState(0);
   const [currentCircle, setCurrentCircle] = useState(null);
   const [gameOver, setGameOver] = useState(false);
@@ -23,6 +23,7 @@ const Game = () => {
   const handleClick = () => {
     setCurrentCircle(null);
     setScore(score + 1);
+    console.log(timeLeft);
   };
 
   // End the game when the timer runs out
@@ -43,7 +44,7 @@ const Game = () => {
   }, [timeLeft, gameOver]);
 
   return (
-    <div>
+    <div className = "formContainer">
       {gameOver ? (
         <h1>Time is up! Your score is {score}.</h1>
       ) : (
@@ -58,8 +59,8 @@ const Game = () => {
                 left: currentCircle.x - currentCircle.radius,
                 width: currentCircle.radius * 2,
                 height: currentCircle.radius * 2,
-                borderRadius: '50%',
-                backgroundColor: 'red',
+                borderRadius: '100%',
+                backgroundColor: 'white',
                 cursor: 'pointer',
               }}
               onClick={handleClick}
