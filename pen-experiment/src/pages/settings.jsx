@@ -2,51 +2,23 @@ import React, { useState } from "react";
 import ToggleSwitch from "../components/ToggleSwitch";
 import Game from "../pages/game.jsx";
 import "../style.scss"
+import { useNavigate } from "react-router-dom";
 
-export function ParentComponent() {
+export function Settings(props) {
     let [give, setGive] = useState(false);
     let [take, setTake] = useState(false);
     let [request, setRequest] = useState(false);
-    let [cooldowns, setCooldowns] = useState("");
+    let [timer, setTimer] = useState("");
 
-    const onSettingsChange = (checked) => {
-        if (!checked) {
-            setGive(false);
-            setTake(false);
-            setRequest(false);
+    let navigate = useNavigate();
 
-        }
+    const handleChange = (event) => {
+        setTimer(event.target.value);
+      };
+    const routeChange = () => {
+        let path = `/game`;
+        navigate(path);
     }
-
-    const handleCooldown = (event) => {
-        setCooldowns(event.target.value);
-    }
-
-    return (
-        <div>
-            <Settings
-                give={give}
-                setGive={setGive}
-                take={take}
-                setTake={setTake}
-                request={request}
-                setRequest={setRequest}
-                cooldowns={cooldowns}
-                setCooldowns={setCooldowns}
-                onSettingsChange={onSettingsChange}
-            />
-            <Game
-                give={give}
-                take={take}
-                request={request}
-                cooldowns={cooldowns}
-            />
-        </div>
-    );
-}
-
-export function Settings(props){
-    const{give, setGive, take, setTake, request, setRequest, cooldowns, setCooldowns, onSettingsChange} = props;
     return (
         <div className='formContainer'>
             <div className='formWrapper'>
@@ -78,10 +50,18 @@ export function Settings(props){
                         />
                     </div>
                     <div>
-                    <label>Cooldowns</label>
-                    <input value={cooldowns} />
+                        <label htmlFor="timer">Timer</label>
+                        <input 
+                          type = "text" 
+                          id ="timer" 
+                          name = "timer"
+                          onChange={handleChange}
+                          value = {timer}
+                          />
                     </div>
-                    <button>Apply</button>
+                    <button onClick={
+                        routeChange
+                    }>Apply</button>
                 </form>
             </div>
         </div>

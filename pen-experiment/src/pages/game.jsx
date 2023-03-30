@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 
 const Game = (props) => {
+  console.log(props.timer);
   const [score, setScore] = useState(0);
   const [currentCircle, setCurrentCircle] = useState(null);
   const [gameOver, setGameOver] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(Number(props.timer));
+  console.log(props.timer);
 
   // Generate a new circle when there is no current circle
   useEffect(() => {
@@ -51,6 +53,9 @@ const Game = (props) => {
         <div>
           <h1>Score: {score}</h1>
           <h2>Time left: {timeLeft}</h2>
+          <button>Give</button>
+          <button>Take</button>
+          <button>Request</button>
           {currentCircle && (
             <div
               style={{
