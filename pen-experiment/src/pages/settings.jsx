@@ -17,7 +17,8 @@ export function Settings(props) {
       };
     const routeChange = () => {
         let path = `/game`;
-        navigate(path);
+        console.log("timer value", timer);
+         navigate(path, { state: { timer: Number(timer), give: String(give), take: String(take), request: String(request)} });
     }
     return (
         <div className='formContainer'>
@@ -59,9 +60,8 @@ export function Settings(props) {
                           value = {timer}
                           />
                     </div>
-                    <button onClick={
-                        routeChange
-                    }>Apply</button>
+                    <button onClick={routeChange}>Apply</button>
+                    
                 </form>
             </div>
         </div>

@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from "react-router-dom";
 
 const Game = (props) => {
-  console.log(props.timer);
+  const location = useLocation();
+  const { timer, give, take, request } = location.state;
   const [score, setScore] = useState(0);
   const [currentCircle, setCurrentCircle] = useState(null);
   const [gameOver, setGameOver] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(Number(props.timer));
-  console.log(props.timer);
+  const [timeLeft, setTimeLeft] = useState(Number(timer));
+  console.log(give);
 
   // Generate a new circle when there is no current circle
   useEffect(() => {
@@ -46,14 +48,16 @@ const Game = (props) => {
   }, [timeLeft, gameOver]);
 
   return (
-    <div className = "formContainer">
+    <div className="formContainer">
       {gameOver ? (
         <h1>Time is up! Your score is {score}.</h1>
       ) : (
         <div>
           <h1>Score: {score}</h1>
           <h2>Time left: {timeLeft}</h2>
-          <button>Give</button>
+          {give ? (
+            <button>Give</button>
+          ): console.log("balls")}
           <button>Take</button>
           <button>Request</button>
           {currentCircle && (
