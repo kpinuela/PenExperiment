@@ -55,11 +55,9 @@ const Game = (props) => {
         <div>
           <h1>Score: {score}</h1>
           <h2>Time left: {timeLeft}</h2>
-          {give ? (
-            <button>Give</button>
-          ): console.log("balls")}
-          <button>Take</button>
-          <button>Request</button>
+          {give ===String(true)&& <button> Give</button>}
+          {take === String(true)&& <button>take</button>}
+          {request === String(true)&& <button>request</button>}
           {currentCircle && (
             <div
               style={{
