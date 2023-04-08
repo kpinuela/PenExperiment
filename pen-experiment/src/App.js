@@ -11,11 +11,14 @@ import Game from "./pages/game";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <Game />
-      </header>
-    </div>
+   <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/settings" element={<Settings />} />
+      <Route path="/game" element={<Game />} />
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+   </BrowserRouter> 
   );
 }
 
