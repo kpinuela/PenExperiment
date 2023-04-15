@@ -1,35 +1,29 @@
-/*
-const express = require("express");
-var myparser = require("body-parser");
-const app = express();
-
-app.get("/", (req, res)=>{
-
-    res.send("Qualtrics Id retriving!");
-})
-app.use(myparser.urlencoded({extended : true}));
-app.post("/", function(request, response){
-    console.log(request.body);
-})
-
-app.listen(8080,()=>{
-    console.log("Node Server started on port 8080\n");
-})
-
-*/
 const http = require('http');
+const { createClient } = require('@supabase/supabase-js');
 var survey_ids = new Set();
 const fs = require('fs');
-//var PouchDB = require('pouchdb');
-//var db = new PouchDB("Participants");
 
 var content = 'This is the text to be written to the file\n';
+const supabaseUrl = 'https://xjpvvjxoyqhwdfqjsflk.supabase.co';
+//this key beolow should not be shared publically only privavetly, it bypass RLS
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqcHZ2anhveXFod2RmcWpzZmxrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY4MTQ0ODI1MCwiZXhwIjoxOTk3MDI0MjUwfQ.QEh_IRx17HaP4ET1ZwEzWFKKfEHAea7giF_17LZxIXU';
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+async function insertGameInfo(identity) {
+  const { data, error } = await supabase.from('gameInfo').insert([{ id: identity }]);
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('Game info inserted successfully');
+  }
+}
 
 
-
-
-const server = http.createServer((req, res) => {
+const server = http.createServer( async (req, res) => {
     let body = '';
+    if(req.method == 'POST'){
+        console.log("A wild psot request appears!")
+    }
   
     req.on('data', (chunk) => {
       body += chunk;
@@ -43,8 +37,8 @@ const server = http.createServer((req, res) => {
         console.log(item);
         if(survey_ids.has(item) == false){
           //only adds to file if survey has the specific number
+          insertGameInfo(item);
           var temp= item.toString() + "\n";
-          var temp2= item.toString();
           fs.access('Qualtrics_IDs.txt', fs.constants.F_OK, (err) => {
           if (err) {
             console.log('File does not exist');
@@ -60,13 +54,6 @@ const server = http.createServer((req, res) => {
             })
           }
           });
-          /*
-          var doc = {
-            "_id": temp2,
-            "name": temp2,
-          }
-          db.put(doc);
-          */
         }
         survey_ids.add(item);
       }
@@ -75,11 +62,6 @@ const server = http.createServer((req, res) => {
       for (const entry of survey_ids) {
         console.log("Set has this item:");
         console.log(entry);
-        /*
-        db.get(entry.toString()).then(function (doc) {
-          console.log(doc);
-        });
-        */
         
         /*
         fs.appendFile('myfile.txt', entry, err => {
@@ -104,4 +86,3 @@ const server = http.createServer((req, res) => {
   server.listen(8080, () => {
     console.log('Server started on port 8080');
   });
-  
