@@ -6,7 +6,7 @@ const fs = require('fs');
 var content = 'This is the text to be written to the file\n';
 const supabaseUrl = 'https://xjpvvjxoyqhwdfqjsflk.supabase.co';
 //this key beolow should not be shared publically only privavetly, it bypass RLS
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqcHZ2anhveXFod2RmcWpzZmxrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY4MTQ0ODI1MCwiZXhwIjoxOTk3MDI0MjUwfQ.QEh_IRx17HaP4ET1ZwEzWFKKfEHAea7giF_17LZxIXU';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqcHZ2anhveXFod2RmcWpzZmxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODE0NDgyNTAsImV4cCI6MTk5NzAyNDI1MH0.Bfuvo_ahI2VGNdcBdDMIC2Cnt0WpfIBRGfrZ03bi98w';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 async function insertGameInfo(identity) {
