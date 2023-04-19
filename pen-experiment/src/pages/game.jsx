@@ -14,14 +14,10 @@ const Game = (props) => {
   // Generate a new circle when there is no current circle
   useEffect(() => {
     if (!currentCircle && !gameOver) {
-      const newCircle = {
-        x: Math.floor(Math.random() * window.innerWidth),
-        y: Math.floor(Math.random() * window.innerHeight),
-        radius: 35,
-        clicked: false,
-      };
-      setCurrentCircle(newCircle);
-      socket.emit("new_circle",{newCircle});
+      socket.on("current_circle", (data) => {
+        setCurrentCircle(data);
+      }
+      );
     }
   }, [currentCircle, gameOver]);
 
@@ -29,10 +25,12 @@ const Game = (props) => {
   const handleClick = () => {
     setCurrentCircle(null);
     setScore(score + 1);
+    socket.emit("circle_clicked",currentCircle);
     console.log(timeLeft);
-    socket.emit("timer",{timeLeft});
-    socket.emit("current_circle",{currentCircle});
-    socket.emit("score",{score});
+    
+    //socket.emit("timer",{timeLeft});
+    //socket.emit("current_circle",{currentCircle});
+    //socket.emit("score",{score});
   };
 
   // End the game when the timer runs out
@@ -46,7 +44,9 @@ const Game = (props) => {
   useEffect(() => {
     if (timeLeft > 0 && !gameOver) {
       const timerId = setTimeout(() => {
-        setTimeLeft(timeLeft - 1);
+        socket.on("timer", (data) => {
+        setTimeLeft(data);
+        });
       }, 1000);
       return () => clearTimeout(timerId);
     }
@@ -67,8 +67,8 @@ const Game = (props) => {
             <div
               style={{
                 position: 'absolute',
-                top: currentCircle.y - currentCircle.radius,
-                left: currentCircle.x - currentCircle.radius,
+                top: currentCircle.y +`%`,
+                left: currentCircle.x +`%`,
                 width: currentCircle.radius * 2,
                 height: currentCircle.radius * 2,
                 borderRadius: '100%',
