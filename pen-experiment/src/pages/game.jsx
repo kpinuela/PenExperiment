@@ -24,13 +24,11 @@ const Game = (props) => {
   // Handle circle clicks
   const handleClick = () => {
     setCurrentCircle(null);
-    setScore(score + 1);
+    socket.on("update_score", (data) => {
+      setScore(data);
+    });
     socket.emit("circle_clicked",currentCircle);
     console.log(timeLeft);
-    
-    //socket.emit("timer",{timeLeft});
-    //socket.emit("current_circle",{currentCircle});
-    //socket.emit("score",{score});
   };
 
   // End the game when the timer runs out
