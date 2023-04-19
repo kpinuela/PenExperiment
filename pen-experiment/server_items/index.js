@@ -19,44 +19,53 @@ const io = new Server(server, {
     },
 });
 
+ const startTimer = () => {
+        const intervalId = setInterval(() => {
+            console.log(timer);
+            timer--;
+            if(timer === 0) {
+                clearInterval(intervalId);
+                timer = 60;
+            }
+            io.emit("timer", timer);
+        },1000);
+    }
+startTimer();
+
 io.on("connection", (socket) => {
 
     console.log(`User connected: ${socket.id}`);
     if (currCircle) {
         socket.emit("current_circle", currCircle);
     }
-    const generateCircle = () => {
-        const newCircle = {
-            x: Math.floor(30+Math.random()*60),
-            y: Math.floor(10+Math.random()*80),
-            radius: 35,
-            clicked: false,
-        };
-        currCircle = newCircle;
-        io.emit("current_circle", currCircle);
-    };
 
-    socket.on("circle_clicked", ()=>{
-        if(currCircle){
+
+    socket.on("circle_clicked", () => {
+        if (currCircle) {
             currCircle = null;
             generateCircle();
         }
     });
 
-    while(timer >0){
-         io.emit("timer", timer);
-         console.log(timer);
-         timer --;
+    const generateCircle = () => {
+        const newCircle = {
+            x: Math.floor(30 + Math.random() * 60),
+            y: Math.floor(10 + Math.random() * 80),
+            radius: 35,
+            clicked: false,
+        };
+        currCircle = newCircle;
+        io.emit("current_circle", currCircle);
     }
 
     socket.on("disconnect", () => {
-        console.log(`User disconnected: ${socket.id}`);
-    });
-    
+    console.log(`User disconnected: ${socket.id}`);
+});
 
-    if(io.engine.clientsCount === 1){
-        generateCircle();
-    }
+
+if (io.engine.clientsCount === 1) {
+    generateCircle();
+}
 })
 
 server.listen(3001, () => {
