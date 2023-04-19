@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
+import io from 'socket.io-client';
+const socket = io.connect("http://localhost:3001");
 
 const Game = (props) => {
-  const location = useLocation();
-  const { timer, give, take, request } = location.state;
+  //const location = useLocation();
+  //const { timer, give, take, request } = location.state;
   const [score, setScore] = useState(0);
   const [currentCircle, setCurrentCircle] = useState(null);
   const [gameOver, setGameOver] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(Number(timer));
-  console.log(give);
+  const [timeLeft, setTimeLeft] = useState(60);
 
   // Generate a new circle when there is no current circle
   useEffect(() => {
@@ -20,6 +21,7 @@ const Game = (props) => {
         clicked: false,
       };
       setCurrentCircle(newCircle);
+      socket.emit("new_circle",{newCircle});
     }
   }, [currentCircle, gameOver]);
 
@@ -28,6 +30,9 @@ const Game = (props) => {
     setCurrentCircle(null);
     setScore(score + 1);
     console.log(timeLeft);
+    socket.emit("timer",{timeLeft});
+    socket.emit("current_circle",{currentCircle});
+    socket.emit("score",{score});
   };
 
   // End the game when the timer runs out
@@ -55,9 +60,9 @@ const Game = (props) => {
         <div>
           <h1>Score: {score}</h1>
           <h2>Time left: {timeLeft}</h2>
-          {give ===String(true)&& <button> Give</button>}
-          {take === String(true)&& <button>take</button>}
-          {request === String(true)&& <button>request</button>}
+          {<button> Give</button>}
+          {<button>take</button>}
+          {<button>request</button>}
           {currentCircle && (
             <div
               style={{
@@ -80,6 +85,7 @@ const Game = (props) => {
 };
 
 export default Game;
+
 
 
 
