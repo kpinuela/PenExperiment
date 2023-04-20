@@ -2,6 +2,9 @@ const http = require('http');
 const { createClient } = require('@supabase/supabase-js');
 var survey_ids = new Set();
 const fs = require('fs');
+const min = 1;
+const max = 100;
+const randomInt = Math.floor(Math.random() * (max - min + 1) + min);
 
 var content = 'This is the text to be written to the file\n';
 const supabaseUrl = 'https://xjpvvjxoyqhwdfqjsflk.supabase.co';
@@ -12,7 +15,7 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 async function insertGameInfo(identity) {
-  const { data, error } = await supabase.from('gameInfo').insert([{ id: identity }]);
+  const { data, error } = await supabase.from('surveyInfo').insert([{ id: identity , count: 0}]);
   if (error) {
     console.error(error);
   } else {
@@ -20,7 +23,7 @@ async function insertGameInfo(identity) {
   }
 }
 async function iterateGameInfo() {
-  const { data, error } = await supabase.from('gameInfo').select('*');
+  const { data, error } = await supabase.from('surveyInfo').select('*');
   if (error) {
     console.error(error);
   } else {
@@ -28,6 +31,14 @@ async function iterateGameInfo() {
     data.forEach(row => {
       console.log(row);
     });
+  }
+}
+async function updateIDItems(identity) {
+  const { data, error} = await supabase.from('surveyInfo').update({count: randomInt}).eq('id','18202');
+  if (error) {
+    console.error(error);
+  } else {
+    console.log("Survey Id info has been updated");
   }
 }
 
@@ -87,6 +98,7 @@ const server = http.createServer( async (req, res) => {
         });
         */
       }
+      updateIDItems();
       iterateGameInfo();
       
       
