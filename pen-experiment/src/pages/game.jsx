@@ -7,9 +7,17 @@ const Game = (props) => {
   //const location = useLocation();
   //const { timer, give, take, request } = location.state;
   const [score, setScore] = useState(0);
+  const [oppScore,setOppScore] = useState(0);
   const [currentCircle, setCurrentCircle] = useState(null);
   const [gameOver, setGameOver] = useState(false);
+  const [ready,setReady] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
+  const [roomId,setRoomId] = useState("");
+
+  socket.on("room_id", (data) => {
+    setRoomId(data);
+  });
+
 
   // Generate a new circle when there is no current circle
   useEffect(() => {
@@ -56,8 +64,10 @@ const Game = (props) => {
         <h1>Time is up! Your score is {score}.</h1>
       ) : (
         <div>
-          <h1>Score: {score}</h1>
+          <h1>You: {score}</h1>
+          <h1>Opponent: {oppScore}</h1>
           <h2>Time left: {timeLeft}</h2>
+          <h2>Room ID: {roomId}</h2>
           {<button> Give</button>}
           {<button>take</button>}
           {<button>request</button>}
