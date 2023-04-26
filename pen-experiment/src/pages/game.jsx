@@ -19,6 +19,7 @@ const Game = (props) => {
   const [roomId, setRoomId] = useState("");
   const [playerId, setPlayerId] = useState("");
   const [enabled, setClickEnabled] = useState(false);
+  const [request, setRequest] = useState(false);
 
   socket.on("room_id", (data, player) => {
     console.log(`player id ${player}`);
@@ -26,9 +27,7 @@ const Game = (props) => {
     setPlayerId(player);
   });
   socket.on("can_click", (data) => {
-    if (data === true) {
-      setClickEnabled(true);
-    }
+    setClickEnabled(data);
   });
 
   // Generate a new circle when there is no current circle
@@ -58,10 +57,22 @@ const Game = (props) => {
     socket.emit("give");
   }
 
-  const handleTake = () =>{
-      setClickEnabled(true);
-      socket.emit("take");
+  const handleTake = () => {
+    setClickEnabled(true);
+    socket.emit("take");
   }
+
+  const handleRequest = () => {
+    setRequest(true);
+  }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setRequest(false);
+    }, 5000); // change 5000 to the number of milliseconds you want the elements to be displayed for
+
+    return () => clearTimeout(timer);
+  }, [setRequest]);
 
   useEffect(() => {
     socket.on("update_opp_score", (data, score) => {
@@ -121,8 +132,15 @@ const Game = (props) => {
           <h2>Time left: {timeLeft}</h2>
           <h2>Room ID: {roomId}</h2>
           {<button onClick={handleGive}> Give</button>}
-          {<button onClick = {handleTake}>take</button>}
-          {<button>request</button>}
+          {<button onClick={handleTake}>take</button>}
+          {<button onClick={handleRequest}>request</button>}
+          {request && (
+            <div>
+              <h1>Opponent wants control. Give?</h1>
+              <button>Yes</button>
+              <button>No</button>
+            </div>
+          )}
           {currentCircle && (
             <div
               style={{
