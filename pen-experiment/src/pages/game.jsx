@@ -18,13 +18,17 @@ const Game = (props) => {
   const [timeLeft, setTimeLeft] = useState(60);
   const [roomId, setRoomId] = useState("");
   const [playerId, setPlayerId] = useState("");
-  const [oppId, setOppId] = useState("");
-  const [enabled,setClickEnabled] = useState(true);
+  const [enabled, setClickEnabled] = useState(false);
 
   socket.on("room_id", (data, player) => {
     console.log(`player id ${player}`);
     setRoomId(data);
     setPlayerId(player);
+  });
+  socket.on("can_click", (data) => {
+    if (data === true) {
+      setClickEnabled(true);
+    }
   });
 
   // Generate a new circle when there is no current circle
@@ -37,13 +41,26 @@ const Game = (props) => {
     }
   }, [currentCircle, gameOver]);
 
+  // Handle circle clicks
   const handleClick = () => {
-    setCurrentCircle(null);
-    socket.emit("circle_clicked", currentCircle);
-    socket.on("update_score", (data, score) => {
-      setScore(score);
-    })
-    console.log(timeLeft);
+    if (enabled) {
+      setCurrentCircle(null);
+      socket.emit("circle_clicked", currentCircle);
+      socket.on("update_score", (data, score) => {
+        setScore(score);
+      })
+      console.log(timeLeft);
+    }
+  }
+
+  const handleGive = () => {
+    setClickEnabled(false);
+    socket.emit("give");
+  }
+
+  const handleTake = () =>{
+      setClickEnabled(true);
+      socket.emit("take");
   }
 
   useEffect(() => {
@@ -55,6 +72,11 @@ const Game = (props) => {
       }
     })
   });
+
+  useEffect(() => {
+
+  })
+
   /* Handle circle clicks
   const handleClick = () => {
     setCurrentCircle(null);
@@ -86,10 +108,10 @@ const Game = (props) => {
         return () => clearTimeout(timerId);
       }
     }
-  }, [timeLeft, gameOver,ready]);
+  }, [timeLeft, gameOver, ready]);
 
   return (
-    <div className="formContainer">
+    <div>
       {gameOver ? (
         <h1>Time is up! Your score is {score}.</h1>
       ) : (
@@ -98,8 +120,8 @@ const Game = (props) => {
           <h1>Opponent: {oppScore}</h1>
           <h2>Time left: {timeLeft}</h2>
           <h2>Room ID: {roomId}</h2>
-          {<button> Give</button>}
-          {<button>take</button>}
+          {<button onClick={handleGive}> Give</button>}
+          {<button onClick = {handleTake}>take</button>}
           {<button>request</button>}
           {currentCircle && (
             <div

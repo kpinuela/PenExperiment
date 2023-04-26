@@ -32,16 +32,6 @@ const generateCircle = (room) => {
 
 };
 
-const startTimer = () => {
-    const intervalId = setInterval(() => {
-        timer--;
-        if (timer === 0) {
-            clearInterval(intervalId);
-        }
-    }, 1000);
-}
-
-
 io.on("connection", (socket) => {
     //make a player object for each users
     const player = {
@@ -90,6 +80,18 @@ io.on("connection", (socket) => {
     if(numClients === 2){
         generateCircle(availablerooms);
         socket.to(availablerooms).emit("start_game", true);
+        const opponent = rooms[availablerooms].players.find(
+          (p) => p.id === player.opponent
+        );
+        const rng = Math.round(Math.random());
+        if (rng === 0) {
+          io.to(player.id).emit("can_click", true);
+          io.to(opponent.id).emit("can_click", false);
+        }else{
+          io.to(player.id).emit("can_click", false);
+          io.to(opponent.id).emit("can_click", true);
+        }
+
     }
 
   
@@ -107,6 +109,21 @@ io.on("connection", (socket) => {
         generateCircle(availablerooms);
       }
     });
+
+    socket.on("give",()=>{
+      const opponent = rooms[availablerooms].players.find(
+        (p) => p.id === player.opponent
+      );
+      io.to(opponent.id).emit("can_click",true);
+    })
+
+    socket.on("take", ()=>{
+      const opponent = rooms[availablerooms].players.find(
+        (p) => p.id === player.opponent
+      );
+      io.to(opponent.id).emit("can_click",false);
+    })
+
   
     socket.on("disconnect", () => {
       console.log(`User disconnected: ${socket.id}`);
