@@ -63,16 +63,13 @@ const Game = (props) => {
   }
 
   const handleRequest = () => {
-    setRequest(true);
+    socket.emit("receive_request");
+  };
+
+  const handleNo = () =>{
+    setRequest(false);
   }
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setRequest(false);
-    }, 5000); // change 5000 to the number of milliseconds you want the elements to be displayed for
-
-    return () => clearTimeout(timer);
-  }, [setRequest]);
 
   useEffect(() => {
     socket.on("update_opp_score", (data, score) => {
@@ -85,7 +82,12 @@ const Game = (props) => {
   });
 
   useEffect(() => {
-
+    socket.on("receive_request", (data) => {
+      setRequest(true);
+      setTimeout(() => {
+        setRequest(false);
+      }, 10000); // 10 seconds
+    })
   })
 
   /* Handle circle clicks
@@ -137,8 +139,8 @@ const Game = (props) => {
           {request && (
             <div>
               <h1>Opponent wants control. Give?</h1>
-              <button>Yes</button>
-              <button>No</button>
+              <button onClick ={handleGive}>Yes</button>
+              <button onClick = {handleNo}>No</button>
             </div>
           )}
           {currentCircle && (

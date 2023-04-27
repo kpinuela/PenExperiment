@@ -117,6 +117,13 @@ io.on("connection", (socket) => {
       io.to(opponent.id).emit("can_click",true);
     })
 
+    socket.on("receive_request",()=>{
+      const opponent = rooms[availablerooms].players.find(
+        (p) => p.id === player.opponent
+      );
+      io.to(opponent.id).emit("receive_request");
+    })
+
     socket.on("take", ()=>{
       const opponent = rooms[availablerooms].players.find(
         (p) => p.id === player.opponent
