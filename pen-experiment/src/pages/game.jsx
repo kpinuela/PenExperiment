@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from "react-router-dom";
 import io from 'socket.io-client';
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect("https://pen-experiment-tlin41390.vercel.app/");
 
 const Game = (props) => {
   let initialScore = 0;
   socket.on("initial_score", (data) => {
     initialScore = data;
   });
-  //const location = useLocation();
-  //const { timer, give, take, request } = location.state;
+
   const [score, setScore] = useState(initialScore);
   const [oppScore, setOppScore] = useState(initialScore);
   const [currentCircle, setCurrentCircle] = useState(null);
@@ -44,7 +42,7 @@ const Game = (props) => {
   const handleClick = () => {
     if (enabled) {
       setCurrentCircle(null);
-      socket.emit("circle_clicked", currentCircle);
+      socket.emit("circle_clicked",timeLeft);
       socket.on("update_score", (data, score) => {
         setScore(score);
       })
