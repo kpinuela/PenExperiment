@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 const port = process.env.PORT || "8080";
-const socket = io.connect("https://pen-experiment-tlin41390.vercel.app");
+const socket = io.connect("https://evening-ridge-47791.herokuapp.com");
 
 const Game = (props) => {
   let initialScore = 0;
