@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
-const socket = io.connect("https://pen-experiment-tlin41390.vercel.app/");
+const port = process.env.PORT || "8080";
+const socket = io.connect("https://pen-experiment-tlin41390.vercel.app");
 
 const Game = (props) => {
   let initialScore = 0;
