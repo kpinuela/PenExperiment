@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import ToggleSwitch from "../components/ToggleSwitch";
-import Game from "../pages/game.jsx";
 import "../style.scss"
 import { useNavigate } from "react-router-dom";
 
