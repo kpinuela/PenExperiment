@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import io from 'socket.io-client';
-import "../style.scss"
+import "../style.scss";
+import "./game_style.css";
 
 const socket = io.connect("https://evening-ridge-47791.herokuapp.com");
 const Game = (props) => {
@@ -22,6 +23,7 @@ const Game = (props) => {
   const [request, setRequest] = useState(false);
   const [surveyID, setSurveyID] = useState("");
   const [endMessage, setEndMessage] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   socket.on("room_id", (data, player) => {
     console.log(`player id ${player}`);
@@ -59,8 +61,19 @@ const Game = (props) => {
     socket.emit("give");
   }
 
+  const handleDisabled = () => {
+    setDisabled(true);
+    setTimeout(() => {
+      setDisabled(false);
+    }, 2000)
+  }
+
   const handleTake = () => {
     setClickEnabled(true);
+    setDisabled(true);
+    setTimeout(() => {
+      setDisabled(false);
+    }, 2000)
     socket.emit("take");
   }
 
@@ -120,9 +133,9 @@ const Game = (props) => {
   }, [timeLeft, gameOver, ready]);
 
   return (
-    <div className='formContainer'>
+    <div>
       {gameOver ? (
-        <div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '50px', flexDirection: 'column' }}>
           <h1>Game Over</h1>
           {score > oppScore ? (
             <div>
@@ -158,18 +171,23 @@ const Game = (props) => {
         </div>
       ) : (
         <div>
-          <h1>You: {score}</h1>
-          <h1>Opponent: {oppScore}</h1>
-          <h2>Time left: {timeLeft}</h2>
-          <h2>Room ID: {roomId}</h2>
-          {<button onClick={handleGive}> Give</button>}
-          {<button onClick={handleTake}>take</button>}
-          {<button onClick={handleRequest}>request</button>}
+          <h1 style={{ color: 'white', padding: "10px" }}>You: {score}</h1>
+          <h1 style={{ color: 'white', padding: "10px" }}>Opponent: {oppScore}</h1>
+          <h2 style={{ color: 'white', padding: "10px" }}>Time left: {timeLeft}</h2>
+          <h2 style={{ color: 'white', padding: "10px" }}>Room ID: {roomId}</h2>
+          <div />
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '-200px' }}>
+            {<button onClick={handleGive}> Give</button>}
+            {<button className={disabled ? "gray-out" : ""} onClick={handleTake}>Take</button>}
+            {<button onClick={handleRequest}>Request</button>}
+          </div >
           {request && (
-            <div>
-              <h1>Opponent wants control. Give?</h1>
-              <button onClick={handleGive}>Yes</button>
-              <button onClick={handleNo}>No</button>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '50px', flexDirection: 'column' }}>
+              <h1 style={{ color: 'white', padding: "10px" }}>Opponent wants control. Give?</h1>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+                <button onClick={handleGive}>Yes</button>
+                <button onClick={handleNo}>No</button>
+              </div>
             </div>
           )}
           {currentCircle && (
@@ -188,7 +206,7 @@ const Game = (props) => {
             />
           )}
         </div>
-      ) }
+      )}
     </div>
   );
 };
