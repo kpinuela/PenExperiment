@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import io from 'socket.io-client';
-const port = process.env.PORT || "8080";
-const socket = io.connect("https://evening-ridge-47791.herokuapp.com");
+import "../style.scss"
 
+const socket = io.connect("https://evening-ridge-47791.herokuapp.com");
 const Game = (props) => {
   let initialScore = 0;
   socket.on("initial_score", (data) => {
@@ -19,6 +20,8 @@ const Game = (props) => {
   const [playerId, setPlayerId] = useState("");
   const [enabled, setClickEnabled] = useState(false);
   const [request, setRequest] = useState(false);
+  const [surveyID, setSurveyID] = useState("");
+  const [endMessage, setEndMessage] = useState(false);
 
   socket.on("room_id", (data, player) => {
     console.log(`player id ${player}`);
@@ -43,7 +46,7 @@ const Game = (props) => {
   const handleClick = () => {
     if (enabled) {
       setCurrentCircle(null);
-      socket.emit("circle_clicked",timeLeft);
+      socket.emit("circle_clicked", timeLeft);
       socket.on("update_score", (data, score) => {
         setScore(score);
       })
@@ -65,10 +68,14 @@ const Game = (props) => {
     socket.emit("receive_request");
   };
 
-  const handleNo = () =>{
+  const handleNo = () => {
     setRequest(false);
   }
 
+  const handleSubmit = () => {
+    socket.emit("submit_survey", surveyID);
+    setEndMessage(true);
+  }
 
   useEffect(() => {
     socket.on("update_opp_score", (data, score) => {
@@ -89,16 +96,6 @@ const Game = (props) => {
     })
   })
 
-  /* Handle circle clicks
-  const handleClick = () => {
-    setCurrentCircle(null);
-    socket.on("update_score", (score) => {
-      setScore(score);
-    });
-    socket.emit("circle_clicked",currentCircle);
-    console.log(timeLeft);
-  };
-  */
 
   // End the game when the timer runs out
   useEffect(() => {
@@ -123,9 +120,42 @@ const Game = (props) => {
   }, [timeLeft, gameOver, ready]);
 
   return (
-    <div>
+    <div className='formContainer'>
       {gameOver ? (
-        <h1>Time is up! Your score is {score}.</h1>
+        <div>
+          <h1>Game Over</h1>
+          {score > oppScore ? (
+            <div>
+              <h2>You win with a score of {score}</h2>
+              <span className="logo">Survey ID Login</span>
+              <input type="text"
+                id="surveyID"
+                placeholder="Survey ID"
+              />
+              <button onClick={handleSubmit}>Enter</button>
+            </div>
+          ) : oppScore > score ? (
+            <div>
+              <h2>Opponent won with a score of {oppScore}</h2>
+              <span className="logo">Survey ID Login</span>
+              <input type="text"
+                id="surveyID"
+                placeholder="Survey ID"
+              />
+              <button>Enter</button>
+            </div>
+          ) : (
+            <div>
+              <h2>It's a tie!</h2>
+              <span className="logo">Survey ID Login</span>
+              <input type="text"
+                id="surveyID"
+                placeholder="Survey ID"
+              />
+              <button>Enter</button>
+            </div>
+          )}
+        </div>
       ) : (
         <div>
           <h1>You: {score}</h1>
@@ -138,8 +168,8 @@ const Game = (props) => {
           {request && (
             <div>
               <h1>Opponent wants control. Give?</h1>
-              <button onClick ={handleGive}>Yes</button>
-              <button onClick = {handleNo}>No</button>
+              <button onClick={handleGive}>Yes</button>
+              <button onClick={handleNo}>No</button>
             </div>
           )}
           {currentCircle && (
@@ -158,7 +188,7 @@ const Game = (props) => {
             />
           )}
         </div>
-      )}
+      ) }
     </div>
   );
 };
