@@ -42,7 +42,7 @@ const Game = (props) => {
       }
       );
     }
-  }, [currentCircle, gameOver]);
+  }, [currentCircle, gameOver, enabled]);
 
   // Handle circle clicks
   const handleClick = () => {
@@ -58,14 +58,8 @@ const Game = (props) => {
 
   const handleGive = () => {
     setClickEnabled(false);
+    setRequest(false);
     socket.emit("give");
-  }
-
-  const handleDisabled = () => {
-    setDisabled(true);
-    setTimeout(() => {
-      setDisabled(false);
-    }, 2000)
   }
 
   const handleTake = () => {
@@ -185,13 +179,14 @@ const Game = (props) => {
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '50px', flexDirection: 'column' }}>
               <h1 style={{ color: 'white', padding: "10px" }}>Opponent wants control. Give?</h1>
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
-                <button onClick={handleGive}>Yes</button>
-                <button onClick={handleNo}>No</button>
+                <button style={{ padding: '15px 30px' }} onClick={handleGive}>Yes</button>
+                <button style={{ padding: '15px 30px' }} onClick={handleNo}>No</button>
               </div>
             </div>
           )}
-          {currentCircle && (
+          {currentCircle ? (
             <div
+              className={`circle ${enabled ? 'enabled' : 'disabled'}`}
               style={{
                 position: 'absolute',
                 top: currentCircle.y + `%`,
@@ -199,12 +194,10 @@ const Game = (props) => {
                 width: currentCircle.radius * 2,
                 height: currentCircle.radius * 2,
                 borderRadius: '100%',
-                backgroundColor: 'white',
-                cursor: 'pointer',
               }}
               onClick={handleClick}
             />
-          )}
+          ):null}
         </div>
       )}
     </div>

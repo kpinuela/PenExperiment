@@ -4,6 +4,16 @@
   cursor: default;
 }
 
+.circle.disabled {
+  background-color: #ccc;
+  cursor: default;
+}
+
+.circle.enabled{
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
 button {
   background-color: #ff8f66;
   color: black;
