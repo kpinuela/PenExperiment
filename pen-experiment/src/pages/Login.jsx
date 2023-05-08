@@ -7,21 +7,22 @@ export const Login = () => {
     const handleChange = (event) => {
         setUserId(event.target.value);
     };
-    const routeChange = () => {
+    const routeChange = (event) => {
+        event.preventDefault();
         let path = `/game`;
         navigate(path, { state: { userId: userId } });
     }
     return (
         <div className='formContainer'>
             <div className='formWrapper'>
-                <form>
+                <form onSubmit={routeChange}>
                     <span className="logo">Survey ID Login</span>
                     <input type="text"
                         id="surveyID"
                         placeholder="Survey ID"
                         onChange = {handleChange} 
                         value = {userId}/>
-                    <button onClick={routeChange}>Enter</button>
+                    <button type="submit">Enter</button>
                 </form>
             </div>
         </div>

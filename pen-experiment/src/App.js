@@ -1,6 +1,6 @@
 import React from 'react';
-import {Settings} from "./pages/settings";
-import {Login} from "./pages/Login";
+import { Settings } from "./pages/settings";
+import { Login } from "./pages/Login";
 import {
   BrowserRouter,
   Routes,
@@ -11,11 +11,11 @@ import Game from "./pages/game";
 
 function App() {
   return (
-   <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Game/>} />
-    </Routes>
-   </BrowserRouter> 
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Game />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

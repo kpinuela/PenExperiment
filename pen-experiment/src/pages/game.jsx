@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import io from 'socket.io-client';
-import "../style.scss"
+import "../style.scss";
+import "./game_style.css";
 
 const socket = io.connect("https://evening-ridge-47791.herokuapp.com");
 const Game = (props) => {
@@ -22,16 +23,32 @@ const Game = (props) => {
   const [request, setRequest] = useState(false);
   const [surveyID, setSurveyID] = useState("");
   const [endMessage, setEndMessage] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+  const [textBoxValue, setTextBoxValue] = useState(false);
+  const [enableGive, setGive] = useState(false);
+  const [enableTake, setTake] = useState(false);
+  const [enableRequest, setReq] = useState(false);
 
   socket.on("room_id", (data, player) => {
-    console.log(`player id ${player}`);
     setRoomId(data);
     setPlayerId(player);
   });
+
+  socket.on("send_give", (data) => {
+    setGive(data);
+  });
+
+  socket.on("send_take", (data) => {
+    setTake(data);
+  });
+
+  socket.on("send_request", (data) => {
+    setReq(data);
+  });
+
   socket.on("can_click", (data) => {
     setClickEnabled(data);
   });
-
   // Generate a new circle when there is no current circle
   useEffect(() => {
     if (!currentCircle && !gameOver) {
@@ -40,7 +57,7 @@ const Game = (props) => {
       }
       );
     }
-  }, [currentCircle, gameOver]);
+  }, [currentCircle, gameOver, enabled]);
 
   // Handle circle clicks
   const handleClick = () => {
@@ -56,11 +73,16 @@ const Game = (props) => {
 
   const handleGive = () => {
     setClickEnabled(false);
+    setRequest(false);
     socket.emit("give");
   }
 
   const handleTake = () => {
     setClickEnabled(true);
+    setDisabled(true);
+    setTimeout(() => {
+      setDisabled(false);
+    }, 2000)
     socket.emit("take");
   }
 
@@ -73,15 +95,16 @@ const Game = (props) => {
   }
 
   const handleSubmit = () => {
-    socket.emit("submit_survey", surveyID);
+    socket.emit("submit_survey", textBoxValue);
+    console.log(String(textBoxValue));
     setEndMessage(true);
   }
+
+
 
   useEffect(() => {
     socket.on("update_opp_score", (data, score) => {
       if (data !== playerId) {
-        console.log(`opp id ${data}}`);
-        console.log(score);
         setOppScore(score);
       }
     })
@@ -120,9 +143,11 @@ const Game = (props) => {
   }, [timeLeft, gameOver, ready]);
 
   return (
-    <div className='formContainer'>
-      {gameOver ? (
-        <div>
+    <div>
+      { endMessage ? (
+          <h1>Thanks for Playing!</h1>
+          ):gameOver ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '50px', flexDirection: 'column' }}>
           <h1>Game Over</h1>
           {score > oppScore ? (
             <div>
@@ -131,6 +156,7 @@ const Game = (props) => {
               <input type="text"
                 id="surveyID"
                 placeholder="Survey ID"
+                onChange = {(e)=> setTextBoxValue(e.target.value)} 
               />
               <button onClick={handleSubmit}>Enter</button>
             </div>
@@ -141,8 +167,10 @@ const Game = (props) => {
               <input type="text"
                 id="surveyID"
                 placeholder="Survey ID"
+                onChange = {(e)=> setTextBoxValue(e.target.value)}
+
               />
-              <button>Enter</button>
+              <button onClick={handleSubmit}>Enter</button>
             </div>
           ) : (
             <div>
@@ -151,29 +179,36 @@ const Game = (props) => {
               <input type="text"
                 id="surveyID"
                 placeholder="Survey ID"
+                onChange = {(e)=> setTextBoxValue(e.target.value)}
               />
-              <button>Enter</button>
+              <button onClick={handleSubmit}>Enter</button>
             </div>
           )}
         </div>
       ) : (
         <div>
-          <h1>You: {score}</h1>
-          <h1>Opponent: {oppScore}</h1>
-          <h2>Time left: {timeLeft}</h2>
-          <h2>Room ID: {roomId}</h2>
-          {<button onClick={handleGive}> Give</button>}
-          {<button onClick={handleTake}>take</button>}
-          {<button onClick={handleRequest}>request</button>}
+          <h1 style={{ color: 'white', padding: "10px" }}>You: {score}</h1>
+          <h1 style={{ color: 'white', padding: "10px" }}>Opponent: {oppScore}</h1>
+          <h2 style={{ color: 'white', padding: "10px" }}>Time left: {timeLeft}</h2>
+          <h2 style={{ color: 'white', padding: "10px" }}>Room ID: {roomId}</h2>
+          <div />
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '-200px' }}>
+            {enableGive === true && <button onClick={handleGive}> Give</button>}
+            {enableTake === true && <button className={disabled ? "gray-out" : ""} onClick={handleTake}>Take</button>}
+            {enableRequest === true && <button onClick={handleRequest}>Request</button>}
+          </div >
           {request && (
-            <div>
-              <h1>Opponent wants control. Give?</h1>
-              <button onClick={handleGive}>Yes</button>
-              <button onClick={handleNo}>No</button>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '50px', flexDirection: 'column' }}>
+              <h1 style={{ color: 'white', padding: "10px" }}>Opponent wants control. Give?</h1>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+                <button style={{ padding: '15px 30px' }} onClick={handleGive}>Yes</button>
+                <button style={{ padding: '15px 30px' }} onClick={handleNo}>No</button>
+              </div>
             </div>
           )}
-          {currentCircle && (
+          {currentCircle ? (
             <div
+              className={`circle ${enabled ? 'enabled' : 'disabled'}`}
               style={{
                 position: 'absolute',
                 top: currentCircle.y + `%`,
@@ -181,14 +216,12 @@ const Game = (props) => {
                 width: currentCircle.radius * 2,
                 height: currentCircle.radius * 2,
                 borderRadius: '100%',
-                backgroundColor: 'white',
-                cursor: 'pointer',
               }}
               onClick={handleClick}
             />
-          )}
+          ):null}
         </div>
-      ) }
+      )}
     </div>
   );
 };
