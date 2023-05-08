@@ -19,11 +19,12 @@ var dates = [];
 const supabase = createClient(sbURL, sbkey);
 // functions to send data to supabase/ receive items to supabase
 async function insertGameInfo(identity) {
-  dates.push(Date());
+  //dates.push(Date());
+  
   //console.log(dates);
   var jsonifiy = JSON.stringify(dates);
   //console.log(jsonifiy);
-  const { data, error } = await supabase.from('surveyInfo2').insert([{ id: identity , count: 0, click_at: jsonifiy}]);
+  const { data, error } = await supabase.from('Game_Data').insert([{ id: identity , game_data: null}]);
   if (error) {
     console.error(error);
   } else {
@@ -32,7 +33,7 @@ async function insertGameInfo(identity) {
 }
 //prints out database item
 async function iterateGameInfo() {
-  const { data, error } = await supabase.from('surveyInfo2').select('*');
+  const { data, error } = await supabase.from('Game_Data').select('*');
   if (error) {
     console.error(error);
   } else {
@@ -42,9 +43,22 @@ async function iterateGameInfo() {
     });
   }
 }
-async function updateIDItems(identity) {
+async function updateIDItems(player_info) {
   //console.log(randomInt);
-  const { data, error} = await supabase.from('surveyInfo2').update({count: randomInt}).eq('id','77765');
+  var dates2 = [];
+  const player = {
+    id: 1,
+    survey_id: 15432, 
+    score: 0,
+    give: 0,
+    take: 0,
+    request: 0,
+    timestamps: []
+  };
+  var place = player.survey_id;
+  dates2.push(player);
+  var jsonifiy = JSON.stringify(dates2);
+  const { data, error} = await supabase.from('Game_Data').update({game_data: jsonifiy}).eq('id',place);
   if (error) {
     console.error(error);
   } else {
