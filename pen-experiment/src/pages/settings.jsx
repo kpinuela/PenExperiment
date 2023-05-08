@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import ToggleSwitch from "../components/ToggleSwitch";
 import "../style.scss"
 import { useNavigate } from "react-router-dom";
+import io from 'socket.io-client';
+
 
 export function Settings(props) {
-    let [give, setGive] = useState(false);
-    let [take, setTake] = useState(false);
-    let [request, setRequest] = useState(false);
+    let [enableGive, setGive] = useState(false);
+    let [enableTake, setTake] = useState(false);
+    let [enableRequest, setRequest] = useState(false);
     let [timer, setTimer] = useState("");
 
     let navigate = useNavigate();
@@ -15,9 +17,7 @@ export function Settings(props) {
         setTimer(event.target.value);
       };
     const routeChange = () => {
-        let path = `/game`;
-        console.log("timer value", timer);
-         navigate(path, { state: { timer: Number(timer), give: String(give), take: String(take), request: String(request)} });
+        console.log("balls");
     }
     return (
         <div className='formContainer'>
@@ -29,7 +29,7 @@ export function Settings(props) {
                         <label htmlFor="give">Give</label>
                         <ToggleSwitch
                             id="give"
-                            checked={give}
+                            checked={enableGive}
                             onChange={setGive}
                         />
                     </div>
@@ -37,7 +37,7 @@ export function Settings(props) {
                         <label htmlFor="take">Take</label>
                         <ToggleSwitch
                             id="take"
-                            checked={take}
+                            checked={enableTake}
                             onChange={setTake}
                         />
                     </div>
@@ -45,7 +45,7 @@ export function Settings(props) {
                         <label htmlFor="request">Request</label>
                         <ToggleSwitch
                             id="request"
-                            checked={request}
+                            checked={enableRequest}
                             onChange={setRequest}
                         />
                     </div>

@@ -24,16 +24,31 @@ const Game = (props) => {
   const [surveyID, setSurveyID] = useState("");
   const [endMessage, setEndMessage] = useState(false);
   const [disabled, setDisabled] = useState(false);
+  const [textBoxValue, setTextBoxValue] = useState(false);
+  const [enableGive, setGive] = useState(false);
+  const [enableTake, setTake] = useState(false);
+  const [enableRequest, setReq] = useState(false);
 
   socket.on("room_id", (data, player) => {
-    console.log(`player id ${player}`);
     setRoomId(data);
     setPlayerId(player);
   });
+
+  socket.on("send_give", (data) => {
+    setGive(data);
+  });
+
+  socket.on("send_take", (data) => {
+    setTake(data);
+  });
+
+  socket.on("send_request", (data) => {
+    setReq(data);
+  });
+
   socket.on("can_click", (data) => {
     setClickEnabled(data);
   });
-
   // Generate a new circle when there is no current circle
   useEffect(() => {
     if (!currentCircle && !gameOver) {
@@ -80,15 +95,16 @@ const Game = (props) => {
   }
 
   const handleSubmit = () => {
-    socket.emit("submit_survey", surveyID);
+    socket.emit("submit_survey", textBoxValue);
+    console.log(String(textBoxValue));
     setEndMessage(true);
   }
+
+
 
   useEffect(() => {
     socket.on("update_opp_score", (data, score) => {
       if (data !== playerId) {
-        console.log(`opp id ${data}}`);
-        console.log(score);
         setOppScore(score);
       }
     })
@@ -128,7 +144,9 @@ const Game = (props) => {
 
   return (
     <div>
-      {gameOver ? (
+      { endMessage ? (
+          <h1>Thanks for Playing!</h1>
+          ):gameOver ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '50px', flexDirection: 'column' }}>
           <h1>Game Over</h1>
           {score > oppScore ? (
@@ -138,6 +156,7 @@ const Game = (props) => {
               <input type="text"
                 id="surveyID"
                 placeholder="Survey ID"
+                onChange = {(e)=> setTextBoxValue(e.target.value)} 
               />
               <button onClick={handleSubmit}>Enter</button>
             </div>
@@ -148,8 +167,10 @@ const Game = (props) => {
               <input type="text"
                 id="surveyID"
                 placeholder="Survey ID"
+                onChange = {(e)=> setTextBoxValue(e.target.value)}
+
               />
-              <button>Enter</button>
+              <button onClick={handleSubmit}>Enter</button>
             </div>
           ) : (
             <div>
@@ -158,8 +179,9 @@ const Game = (props) => {
               <input type="text"
                 id="surveyID"
                 placeholder="Survey ID"
+                onChange = {(e)=> setTextBoxValue(e.target.value)}
               />
-              <button>Enter</button>
+              <button onClick={handleSubmit}>Enter</button>
             </div>
           )}
         </div>
@@ -171,9 +193,9 @@ const Game = (props) => {
           <h2 style={{ color: 'white', padding: "10px" }}>Room ID: {roomId}</h2>
           <div />
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '-200px' }}>
-            {<button onClick={handleGive}> Give</button>}
-            {<button className={disabled ? "gray-out" : ""} onClick={handleTake}>Take</button>}
-            {<button onClick={handleRequest}>Request</button>}
+            {enableGive === true && <button onClick={handleGive}> Give</button>}
+            {enableTake === true && <button className={disabled ? "gray-out" : ""} onClick={handleTake}>Take</button>}
+            {enableRequest === true && <button onClick={handleRequest}>Request</button>}
           </div >
           {request && (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '50px', flexDirection: 'column' }}>
