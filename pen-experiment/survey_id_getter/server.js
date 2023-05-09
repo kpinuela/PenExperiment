@@ -45,19 +45,10 @@ async function iterateGameInfo() {
 }
 async function updateIDItems(player_info) {
   //console.log(randomInt);
-  var dates2 = [];
-  const player = {
-    id: 1,
-    survey_id: 15432, 
-    score: 0,
-    give: 0,
-    take: 0,
-    request: 0,
-    timestamps: []
-  };
-  var place = player.survey_id;
-  dates2.push(player);
-  var jsonifiy = JSON.stringify(dates2);
+  var stats = [];
+  var place = Number(player.survey_id);
+  stats.push(player);
+  var jsonifiy = JSON.stringify(stats);
   const { data, error} = await supabase.from('Game_Data').update({game_data: jsonifiy}).eq('id',place);
   if (error) {
     console.error(error);
