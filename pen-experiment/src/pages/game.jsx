@@ -22,7 +22,6 @@ const Game = (props) => {
   const [playerId, setPlayerId] = useState("");
   const [enabled, setClickEnabled] = useState(false);
   const [request, setRequest] = useState(false);
-  const [surveyID, setSurveyID] = useState("");
   const [endMessage, setEndMessage] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [textBoxValue, setTextBoxValue] = useState(false);
@@ -146,12 +145,12 @@ const Game = (props) => {
       if (timeLeft > 0 && !gameOver) {
         const timerId = setTimeout(() => {
           setTimeLeft(timeLeft - 1);
-          socket.emit("record time", timeLeft);
+          socket.emit("record time", roomId, timeLeft);
         }, 1000);
         return () => clearTimeout(timerId);
       }
     }
-  }, [timeLeft, gameOver, ready, enableTimer]);
+  }, [timeLeft, gameOver, ready, enableTimer, roomId]);
 
   //check to see if the opponents time is less than the current time if so set time left to the opponents time
   useEffect(() => {
@@ -166,9 +165,11 @@ const Game = (props) => {
   return (
     <div>
       {endMessage ? (
-        <h1>Thanks for Playing!</h1>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <h1>Thanks for Playing!</h1>
+        </div>
       ) : gameOver ? (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '50px', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '50px', flexDirection: 'column', textAlign: 'center' }}>
           <h1>Game Over</h1>
           {score > oppScore ? (
             <div>
@@ -179,19 +180,20 @@ const Game = (props) => {
                 placeholder="Survey ID"
                 onChange={(e) => setTextBoxValue(e.target.value)}
               />
-              <button onClick={handleSubmit}>Enter</button>
+              <button onClick={handleSubmit} style={{ marginLeft: '10px', padding: '5px', fontSize: '12px' }}>Enter</button>
+
             </div>
           ) : oppScore > score ? (
             <div>
               <h2>Opponent won with a score of {oppScore}</h2>
-              <span className="logo">Survey ID Login</span>
+              <span className="logo">Survey ID Login:</span>
               <input type="text"
                 id="surveyID"
                 placeholder="Survey ID"
                 onChange={(e) => setTextBoxValue(e.target.value)}
 
               />
-              <button onClick={handleSubmit}>Enter</button>
+              <button onClick={handleSubmit} style={{ marginLeft: '10px', padding: '5px', fontSize: '12px' }}>Enter</button>
             </div>
           ) : (
             <div>
@@ -202,7 +204,7 @@ const Game = (props) => {
                 placeholder="Survey ID"
                 onChange={(e) => setTextBoxValue(e.target.value)}
               />
-              <button onClick={handleSubmit}>Enter</button>
+              <button onClick={handleSubmit} style={{ marginLeft: '10px', padding: '3px', fontSize: '12px' }}>Enter</button>
             </div>
           )}
         </div>
