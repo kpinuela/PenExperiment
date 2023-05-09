@@ -7,6 +7,7 @@ import "./game_style.css";
 const socket = io.connect("https://evening-ridge-47791.herokuapp.com");
 const Game = (props) => {
   let initialScore = 0;
+  let initialTime = 60;
   socket.on("initial_score", (data) => {
     initialScore = data;
   });
@@ -16,7 +17,7 @@ const Game = (props) => {
   const [currentCircle, setCurrentCircle] = useState(null);
   const [gameOver, setGameOver] = useState(false);
   const [ready, setReady] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(initialTime);
   const [roomId, setRoomId] = useState("");
   const [playerId, setPlayerId] = useState("");
   const [enabled, setClickEnabled] = useState(false);
@@ -28,11 +29,13 @@ const Game = (props) => {
   const [enableGive, setGive] = useState(false);
   const [enableTake, setTake] = useState(false);
   const [enableRequest, setReq] = useState(false);
+  const [enableTimer, setTimer] = useState(true);
 
   socket.on("room_id", (data, player) => {
     setRoomId(data);
     setPlayerId(player);
   });
+
 
   socket.on("send_give", (data) => {
     setGive(data);
@@ -44,6 +47,13 @@ const Game = (props) => {
 
   socket.on("send_request", (data) => {
     setReq(data);
+  });
+
+  socket.on("send_timer", (data) => {
+    setTimer(data);
+  });
+  socket.on("init_time", (data) => {
+    setTimeLeft(Number(data));
   });
 
   socket.on("can_click", (data) => {
@@ -132,21 +142,32 @@ const Game = (props) => {
     socket.on("start_game", (start) => {
       setReady(start);
     })
-    if (ready) {
+    if (ready && enableTimer) {
       if (timeLeft > 0 && !gameOver) {
         const timerId = setTimeout(() => {
           setTimeLeft(timeLeft - 1);
+          socket.emit("record time", timeLeft);
         }, 1000);
         return () => clearTimeout(timerId);
       }
     }
-  }, [timeLeft, gameOver, ready]);
+  }, [timeLeft, gameOver, ready, enableTimer]);
+
+  //check to see if the opponents time is less than the current time if so set time left to the opponents time
+  useEffect(() => {
+    socket.on("update_time", (data) => {
+      if (data < timeLeft) {
+        console.log("opponents timer: ", data);
+        setTimeLeft(data - 1);
+      }
+    })
+  })
 
   return (
     <div>
-      { endMessage ? (
-          <h1>Thanks for Playing!</h1>
-          ):gameOver ? (
+      {endMessage ? (
+        <h1>Thanks for Playing!</h1>
+      ) : gameOver ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '50px', flexDirection: 'column' }}>
           <h1>Game Over</h1>
           {score > oppScore ? (
@@ -156,7 +177,7 @@ const Game = (props) => {
               <input type="text"
                 id="surveyID"
                 placeholder="Survey ID"
-                onChange = {(e)=> setTextBoxValue(e.target.value)} 
+                onChange={(e) => setTextBoxValue(e.target.value)}
               />
               <button onClick={handleSubmit}>Enter</button>
             </div>
@@ -167,7 +188,7 @@ const Game = (props) => {
               <input type="text"
                 id="surveyID"
                 placeholder="Survey ID"
-                onChange = {(e)=> setTextBoxValue(e.target.value)}
+                onChange={(e) => setTextBoxValue(e.target.value)}
 
               />
               <button onClick={handleSubmit}>Enter</button>
@@ -179,7 +200,7 @@ const Game = (props) => {
               <input type="text"
                 id="surveyID"
                 placeholder="Survey ID"
-                onChange = {(e)=> setTextBoxValue(e.target.value)}
+                onChange={(e) => setTextBoxValue(e.target.value)}
               />
               <button onClick={handleSubmit}>Enter</button>
             </div>
@@ -189,7 +210,7 @@ const Game = (props) => {
         <div>
           <h1 style={{ color: 'white', padding: "10px" }}>You: {score}</h1>
           <h1 style={{ color: 'white', padding: "10px" }}>Opponent: {oppScore}</h1>
-          <h2 style={{ color: 'white', padding: "10px" }}>Time left: {timeLeft}</h2>
+          {enableTimer === true && <h2 style={{ color: 'white', padding: "10px" }}>Time left: {timeLeft}</h2>}
           <h2 style={{ color: 'white', padding: "10px" }}>Room ID: {roomId}</h2>
           <div />
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '-200px' }}>
@@ -219,7 +240,7 @@ const Game = (props) => {
               }}
               onClick={handleClick}
             />
-          ):null}
+          ) : null}
         </div>
       )}
     </div>
