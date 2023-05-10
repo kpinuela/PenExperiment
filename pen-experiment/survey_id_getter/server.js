@@ -57,6 +57,14 @@ async function updateIDItems(player_info) {
   }
 }
 
+async function updateSettings(){
+  var currentUpdate = Date();
+  console.log(currentUpdate);
+  var sets = ["true", "false", "true"];
+  var jsonifiy = JSON.stringify(sets);
+  const {data, error} = await supabase.from('Game_settings').insert([{Time_set: currentUpdate.toString(), settings: jsonifiy}]);
+}
+
 app.use(express.json());
 app.use(cors());
 app.get(["/", "/:name"], (req, res) => {
@@ -79,6 +87,7 @@ app.post('/surveyids', (req, res) => {
   } else {
     survey_ids.add(num);
   }
+  //updateSettings();
   //updateIDItems();
   //iterateGameInfo();
   res.send('Number received');
