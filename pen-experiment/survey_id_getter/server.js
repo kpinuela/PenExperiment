@@ -31,6 +31,19 @@ async function insertGameInfo(identity) {
     //console.log('Game info inserted successfully');
   }
 }
+async function insertGameInfo2(identity) {
+  //dates.push(Date());
+  
+  //console.log(dates);
+  var jsonifiy = JSON.stringify(dates);
+  //console.log(jsonifiy);
+  const { data, error } = await supabase.from('Game_Info').insert([{ id: identity , game_data: null}]);
+  if (error) {
+    console.error(error);
+  } else {
+    //console.log('Game info inserted successfully');
+  }
+}
 //prints out database item
 async function iterateGameInfo() {
   const { data, error } = await supabase.from('Game_Data').select('*');
@@ -46,10 +59,10 @@ async function iterateGameInfo() {
 async function updateIDItems(player_info) {
   //console.log(randomInt);
   var stats = [];
-  var place = Number(player.survey_id);
-  stats.push(player);
+  //var place = Number(player.survey_id);
+  //stats.push(player);
   var jsonifiy = JSON.stringify(stats);
-  const { data, error} = await supabase.from('Game_Data').update({game_data: jsonifiy}).eq('id',place);
+  const { data, error} = await supabase.from('Game_Info').update({game_data: jsonifiy}).eq('id','R_3PzTtl4015FeHc0');
   if (error) {
     console.error(error);
   } else {
@@ -79,16 +92,16 @@ app.get(["/", "/:name"], (req, res) => {
 app.post('/surveyids', (req, res) => {
   const number = req.body.number;
   
-  var num = parseInt(number);
+  //var num = parseInt(number);
   //console.log('Received number:', number);
-  if(survey_ids.has(num) == false){
-  insertGameInfo(num);
-  survey_ids.add(num);
+  if(survey_ids.has(number) == false){
+  insertGameInfo2(number);
+  survey_ids.add(number);
   } else {
-    survey_ids.add(num);
+    survey_ids.add(number);
   }
   //updateSettings();
-  //updateIDItems();
+  updateIDItems();
   //iterateGameInfo();
   res.send('Number received');
 });
