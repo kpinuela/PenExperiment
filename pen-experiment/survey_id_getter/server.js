@@ -19,24 +19,6 @@ var dates = [];
 const supabase = createClient(sbURL, sbkey);
 // functions to send data to supabase/ receive items to supabase
 async function insertGameInfo(identity) {
-  //dates.push(Date());
-  
-  //console.log(dates);
-  var jsonifiy = JSON.stringify(dates);
-  //console.log(jsonifiy);
-  const { data, error } = await supabase.from('Game_Info').insert([{ id: identity , game_data: null}]);
-  if (error) {
-    console.error(error);
-  } else {
-    //console.log('Game info inserted successfully');
-  }
-}
-async function insertGameInfo2(identity) {
-  //dates.push(Date());
-  
-  //console.log(dates);
-  var jsonifiy = JSON.stringify(dates);
-  //console.log(jsonifiy);
   const { data, error } = await supabase.from('Game_Info').insert([{ id: identity , game_data: null}]);
   if (error) {
     console.error(error);
@@ -45,38 +27,7 @@ async function insertGameInfo2(identity) {
   }
 }
 //prints out database item
-async function iterateGameInfo() {
-  const { data, error } = await supabase.from('Game_Data').select('*');
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('Game info retrieved successfully');
-    data.forEach(row => {
-      console.log(row);
-    });
-  }
-}
-async function updateIDItems(player_info) {
-  //console.log(randomInt);
-  var stats = [];
-  //var place = Number(player.survey_id);
-  //stats.push(player);
-  var jsonifiy = JSON.stringify(stats);
-  const { data, error} = await supabase.from('Game_Info').update({game_data: jsonifiy}).eq('id',player_info);
-  if (error) {
-    console.error(error);
-  } else {
-    //console.log("Survey Id info has been updated");
-  }
-}
 
-async function updateSettings(){
-  var currentUpdate = Date();
-  console.log(currentUpdate);
-  var sets = ["true", "false", "true"];
-  var jsonifiy = JSON.stringify(sets);
-  const {data, error} = await supabase.from('Game_settings').insert([{Time_set: currentUpdate.toString(), settings: jsonifiy}]);
-}
 
 app.use(express.json());
 app.use(cors());
@@ -91,18 +42,15 @@ app.get(["/", "/:name"], (req, res) => {
 });
 app.post('/surveyids', (req, res) => {
   const number = req.body.number;
-  
-  //var num = parseInt(number);
-  //console.log('Received number:', number);
   if(survey_ids.has(number) == false){
     insertGameInfo(number);
     survey_ids.add(number);
+    survey_ids.delete(number);
   } else {
     survey_ids.add(number);
+    survey_ids.delete(number);
   }
-  //updateSettings();
-  //updateIDItems();
-  //iterateGameInfo();
+  
   res.send('Number received');
 });
 
