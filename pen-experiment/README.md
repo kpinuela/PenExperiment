@@ -14,5 +14,5 @@ Create a Vercel Account here at [https://vercel.com/](https://vercel.com/)
 Run vercel on the root of the repository and follow the instructions in the terminal to set up on the repository
 
 
-###Deploying
+### Deploying
 After setting up vercel on your repository, you can just run `vercel` on the terminal whenever you want to test your updates.
