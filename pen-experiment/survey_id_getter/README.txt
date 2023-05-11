@@ -1,3 +1,12 @@
+To isntall libraries to run this you would need to isntall node js by going to https://nodejs.org/en
+and follow the isntructions to install this. You would also need to install specific javascript libraries
+where you would need to do:
+npm install express
+npm install dotenv
+npm install cors
+npm install @supabase/supabase-js
+These are the javascript libraries used to generate the processes
+
 This folder contains the item to hsot a server that collects survey IDs to be used to play the clicker game part of the project.
 The server is hosted on Fly.io web service, here is a link to their website
 https://fly.io/ In order to deploy this server you would need to create an account with fly.io.
