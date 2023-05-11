@@ -24,7 +24,7 @@ async function insertGameInfo(identity) {
   //console.log(dates);
   var jsonifiy = JSON.stringify(dates);
   //console.log(jsonifiy);
-  const { data, error } = await supabase.from('Game_Data').insert([{ id: identity , game_data: null}]);
+  const { data, error } = await supabase.from('Game_Info').insert([{ id: identity , game_data: null}]);
   if (error) {
     console.error(error);
   } else {
@@ -62,7 +62,7 @@ async function updateIDItems(player_info) {
   //var place = Number(player.survey_id);
   //stats.push(player);
   var jsonifiy = JSON.stringify(stats);
-  const { data, error} = await supabase.from('Game_Info').update({game_data: jsonifiy}).eq('id','R_3PzTtl4015FeHc0');
+  const { data, error} = await supabase.from('Game_Info').update({game_data: jsonifiy}).eq('id',player_info);
   if (error) {
     console.error(error);
   } else {
@@ -95,13 +95,13 @@ app.post('/surveyids', (req, res) => {
   //var num = parseInt(number);
   //console.log('Received number:', number);
   if(survey_ids.has(number) == false){
-  insertGameInfo2(number);
-  survey_ids.add(number);
+    insertGameInfo(number);
+    survey_ids.add(number);
   } else {
     survey_ids.add(number);
   }
   //updateSettings();
-  updateIDItems();
+  //updateIDItems();
   //iterateGameInfo();
   res.send('Number received');
 });
