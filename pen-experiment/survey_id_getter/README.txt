@@ -28,16 +28,18 @@ terminal command : flyctl apps destroy "name of your app".
 
 Another note to make your qualtrics survey connect to our game you would follow these instructions:
 In your Qualtrics Survey, go to the survey flow. In there create an Embeded Data block at the top of your survey blocks.
-Then you would create a filed called "Survey Id" and sets its value to ${rand://int/10000:99999} to create the survey Ids.
+Then you would create embeded data under the field of RID or ResponseID in Qualtrics to create the survey Ids.
+This generates a survey specific id for each person taking the survey so that you can correlate this id with a specific game data response.
 Then go back to survey builder and create a text and graphic block at the end of your survey. In that block
-Make it say something like "Your Id for the game is ${e://Field/Survey%20Id}" where the
-${e://Field/Survey%20Id} is the way to display the embeded data that is their ID.
+Make it say something like "Your Id for the game is ${e://Field/ResponseID}" where the
+${e://Field/ResponseID} is the way to display the embeded data that is their ID.
 Finally you would click on the question block, click on JavaScript and inside the
 addOnReady function you would include this :
 	const url = 'https://qualtrics-id-getter.fly.dev/surveyids'; // URL of your Express server API endpoint
-    var currentID = parseInt("${e://Field/Survey%20Id}"); //This gets the embeded data from the survey
+	var ResponseID ="${e://Field/ResponseID}" //use this field instead of random int
 
-	const data = {number: currentID};
+  // Make a POST request to your Express server API endpoint
+	const data = {number: ResponseID};
   fetch(url, {
     method: 'POST',
     headers: {
@@ -54,4 +56,8 @@ addOnReady function you would include this :
 
 This block of code above sends the survey id to the server that saves it to the supabase database. After this aspect has been complete you can now
 deploy the server on fly.
+
+Another thing to note is that to download the data from the supabase database, you would need to go to the supabase dashboard. Then you would
+need to go to the project that you have created for the experiment. THen you would go to the table you are saving the game data to. inside
+the table you would click the top msot left box to select all entries and then click export to csv to save the data into a csv file.
 
