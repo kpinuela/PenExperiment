@@ -55,7 +55,8 @@ addOnReady function you would include this :
   });
 
 This block of code above sends the survey id to the server that saves it to the supabase database. After this aspect has been complete you can now
-deploy the server on fly.
+deploy the server on fly. One note is when you do fly launch you do not need to say yes for a postSql or any sort of database
+prompted by th flyctl since we already using a supabase database.
 
 Another thing to note is that to download the data from the supabase database, you would need to go to the supabase dashboard. Then you would
 need to go to the project that you have created for the experiment. THen you would go to the table you are saving the game data to. inside
