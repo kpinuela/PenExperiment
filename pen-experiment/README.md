@@ -10,9 +10,14 @@ To host this game you will need to create a vercel account and install vercel on
 
 Fork the project so that you have a copy of this repository where you can link to the game.
 
+Server Repository configured [https://github.com/tlin41390/Pen_React_Server](https://github.com/tlin41390/Pen_React_Server)
+
+
 Create a Vercel Account here at [https://vercel.com/](https://vercel.com/)
 Run vercel on the root of the repository and follow the instructions in the terminal to set up on the repository
 
 
-## Deploying
+## How It was built
+
+If you want to directly edit the game, you will also need to fork and/or clone this repository that will server as the server.
 After setting up vercel on your repository, you can just run `vercel` on the terminal whenever you want to test your updates.
